@@ -1,9 +1,11 @@
 from flask import Flask
 from config import config
 from flask_sqlalchemy import SQLAlchemy
+from apifairy import APIFairy
 
 db = SQLAlchemy()
- 
+apifairy = APIFairy()
+
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -14,6 +16,7 @@ def create_app(config_name):
 
     # Initialize extensions
     db.init_app(app)
+    apifairy.init_app(app)
 
     # Register click commands
     from api.cli import bp as cli_bp
