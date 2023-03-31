@@ -174,20 +174,28 @@ class DataExtractor:
 
 
 class FileProcessor:
-    def __init__(self):
-        self.cwd = os.getcwd()
+    def __init__(self, folder='./txt'):
+        self.folder = folder
         self.extractor = DataExtractor()
 
     def process_files(self):
+        if not os.path.isdir(self.folder):
+            print(f"Error: {self.folder} is not a valid folder.")
+            return
+
         files_count = 0
         results = []
 
-        for filename in os.listdir(self.cwd):
+        for filename in os.listdir(self.folder):
             if not filename.endswith('.txt'):
                 continue
 
+            file_path = os.path.join(self.folder, filename)
+            if not os.path.isfile(file_path):
+                continue
+
             files_count += 1
-            data = self.extractor.extract_data_from_file(filename)
+            data = self.extractor.extract_data_from_file(file_path)
             if data:
                 results.append(data)
 
