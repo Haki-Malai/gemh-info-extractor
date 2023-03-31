@@ -24,26 +24,33 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    MYSQL_USERNAME = os.environ.get("MYSQL_DEV_USERNAME")
-    MYSQL_PASSWORD = os.environ.get("MYSQL_DEV_PASSWORD")
-    MYSQL_DATABASE = os.environ.get("MYSQL_DEV_DATABASE")
+    def __init__(self):
+        super().__init__(
+            os.environ.get("MYSQL_DEV_USERNAME"),
+            os.environ.get("MYSQL_DEV_PASSWORD"),
+            os.environ.get("MYSQL_DEV_DATABASE")
+        )
 
 
 class TestingConfig(Config):
-    MYSQL_USERNAME = os.environ.get("MYSQL_TEST_USERNAME")
-    MYSQL_PASSWORD = os.environ.get("MYSQL_TEST_PASSWORD")
-    MYSQL_DATABASE = os.environ.get("MYSQL_TEST_DATABASE")
+    def __init__(self):
+        super().__init__(
+            os.environ.get("MYSQL_TEST_USERNAME"),
+            os.environ.get("MYSQL_TEST_PASSWORD"),
+            os.environ.get("MYSQL_TEST_DATABASE"))
 
 
 class ProductionConfig(Config):
-    MYSQL_USERNAME = os.environ.get("MYSQL_PROD_USERNAME")
-    MYSQL_PASSWORD = os.environ.get("MYSQL_PROD_PASSWORD")
-    MYSQL_DATABASE = os.environ.get("MYSQL_PROD_DATABASE")
+    def __init__(self):
+        super().__init__(
+            os.environ.get("MYSQL_PROD_USERNAME"),
+            os.environ.get("MYSQL_PROD_PASSWORD"),
+            os.environ.get("MYSQL_PROD_DATABASE"))
 
 
 config = {
-    'default': DevelopmentConfig,
-    'production': ProductionConfig,
-    'development': DevelopmentConfig,
-    'testing': TestingConfig
+    'default': DevelopmentConfig(),
+    'production': ProductionConfig(),
+    'development': DevelopmentConfig(),
+    'testing': TestingConfig()
 }
