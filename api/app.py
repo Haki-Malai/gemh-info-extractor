@@ -1,9 +1,11 @@
 from flask import Flask
 from config import config
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from apifairy import APIFairy
 
 db = SQLAlchemy()
+mg = Migrate()
 apifairy = APIFairy()
 
 
@@ -16,6 +18,7 @@ def create_app(config_name):
 
     # Initialize extensions
     db.init_app(app)
+    mg.init_app(app, db)
     apifairy.init_app(app)
 
     # Register click commands
