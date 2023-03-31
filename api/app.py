@@ -25,8 +25,15 @@ def create_app(config_name):
     from api.cli import bp as cli_bp
     app.register_blueprint(cli_bp)
 
-    @app.route("/")
-    def index():
-        return "Hello World!"
+    from app import models
+    @app.shell_context_processor
+    def make_shell_context():
+        ctx = {'db': db}
+        for attr in dir(models):
+            model = getattr(models, attr)
+            if hasattr(model, '__bases__') and \
+                    db.Model in getattr(model, '__bases__'):
+                ctx[attr] = model
+        return ctx
 
     return app
