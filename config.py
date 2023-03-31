@@ -4,18 +4,24 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    # Flask
+    JSON_SORT_KEYS = False
+
     # SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = None
+
     # MySQL
     MYSQL_SERVER = os.environ.get("MYSQL_SERVER")
 
     # Data pagination
     ITEMS_PER_BODY = 20
+
     # APIFairy
     APIFAIRY_TITLE = os.environ.get("APIFAIRY_TITLE")
     APIFAIRY_VERSION = os.environ.get("APIFAIRY_VERSION")
     APIFAIRY_UI = os.environ.get("APIFAIRY_UI")
+
 
     def __init__(self, username, password, database):
         self.SQLALCHEMY_DATABASE_URI = (
