@@ -94,7 +94,7 @@ class DataExtractor:
                 date_values.add(date_obj.strftime('%d/%m/%Y'))
 
         return date_values
-    
+
     def _extract_name_values(self, words: list[str]) -> set[str]:
         name_values = set()
         for index, word in enumerate(words):
@@ -168,10 +168,9 @@ class DataExtractor:
     def _string_to_date(self, date_str: str) -> datetime:
         for fmt in ['%d/%m/%Y', '%d-%m-%Y', '%d/%m/%y', '%d-%m-%y']:
             try:
-                return datetime.strptime(date_str, fmt).date()
+                return datetime.strptime(date_str, fmt)
             except ValueError:
                 pass
-        return None
 
 
 class FileProcessor:
