@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os
 import re
-import warnings
+from warnings import warn
 from datetime import datetime
 from difflib import SequenceMatcher
 from typing import Dict
@@ -12,6 +12,7 @@ class DataExtractor:
     BEFORE_DATE_WORD: str = "την"
     BEFORE_WEBSITE_WORD: str = "ιστοσελιδασ"
     AFTER_DATE_WORD: str = "καταχωρηθηκε"
+    DATE_FORMATS: list[str] = ['%d/%m/%Y', '%d-%m-%Y', '%d/%m/%y', '%d-%m-%y']
     BEFORE_NAME_WORD: str = "επωνυμια"
     NAME_SYMBOLS: list[str] = ['-', '&']
     NON_NAME_WORDS: list[str] = ['ΔΙΑΚΡΙΤΙΚΟΣ']
@@ -91,7 +92,7 @@ class DataExtractor:
                                                     next_next_word.lower()).ratio()
             if after_date_word_ratio > 0.5:
                 date_obj = self._string_to_date(next_word)
-                date_values.add(date_obj.strftime('%d/%m/%Y'))
+                date_values.add(date_obj)
 
         return date_values
 
@@ -132,33 +133,34 @@ class DataExtractor:
         name_values = self._extract_name_values(words)
 
         if len(gemh_values) > 1:
-            warnings.warn(f"Warning: Duplicate ΓΕΜΗ values found in {filename}")
+            warn(f"Warning: Duplicate ΓΕΜΗ values found in {filename}")
         elif len(gemh_values) == 0:
-            warnings.warn(f"Warning: No ΓΕΜΗ values found in {filename}")
+            warn(f"Warning: No ΓΕΜΗ values found in {filename}")
             data['gemh'] = ''
         else:
             data['gemh'] = list(gemh_values)[0]
 
         if len(date_values) > 1:
-            warnings.warn(f"Warning: Duplicate date values found in {filename}")
+            warn(f"Warning: Duplicate date values found in {filename}")
         elif len(date_values) == 0:
-            warnings.warn(f"Warning: No date values found in {filename}")
+            warn(f"Warning: No date values found in {filename}")
             data['date'] = ''
         else:
             data['date'] = list(date_values)[0]
 
         if len(website_values) > 1:
-            warnings.warn(f"Warning: Duplicate website values found in {filename}")
+            warn(f"Warning: Duplicate website values found in {filename}")
         elif len(website_values) == 0:
-            warnings.warn(f"Warning: No website values found in {filename}")
+            warn(f"Warning: No website values found in {filename}")
             data['website'] = ''
         else:
             data['website'] = list(website_values)[0]
 
         if len(name_values) > 1:
-            warnings.warn(f"Warning: Duplicate name values found in {filename}")
+            warn(f"Warning: Duplicate name values found in {filename}")
+            data['name'] = list(name_values)[0]
         elif len(name_values) == 0:
-            warnings.warn(f"Warning: No name values found in {filename}")
+            warn(f"Warning: No name values found in {filename}")
             data['name'] = ''
         else:
             data['name'] = list(name_values)[0]
@@ -166,15 +168,16 @@ class DataExtractor:
         return data
 
     def _string_to_date(self, date_str: str) -> datetime:
-        for fmt in ['%d/%m/%Y', '%d-%m-%Y', '%d/%m/%y', '%d-%m-%y']:
+        for fmt in self.DATE_FORMATS:
             try:
                 return datetime.strptime(date_str, fmt)
             except ValueError:
                 pass
+        raise ValueError(f"Unable to parse date string: {date_str}")
 
 
 class FileProcessor:
-    def __init__(self, folder='./txt'):
+    def __init__(self, folder: str='./txt'):
         self.folder = folder
         self.extractor = DataExtractor()
 
@@ -200,8 +203,7 @@ class FileProcessor:
                 results.append(data)
 
         print(f"Processed {files_count} files, extracted data from {len(results)} files")
-        import pprint
-        pprint.pprint(results)
+        return results
 
 
 def main():
