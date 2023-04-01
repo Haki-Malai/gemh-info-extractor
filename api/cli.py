@@ -27,6 +27,6 @@ def extract(folder: str):
             added_companies += 1
         except IntegrityError as e:
             db.session.rollback()
-            print(f"Duplicate entry for {data['name']}")
+            print(f'Duplicate entry for {data["name"]}')
             warn(e)
-    print(f"Successfully added {added_companies} companies to the database.")
+    print(f'Successfully added {added_companies} companies to the database.')

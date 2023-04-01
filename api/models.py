@@ -11,4 +11,4 @@ class Company(db.Model):
                                   default=datetime.utcnow)
 
     def __repr__(self):
-        return "<Company %s>" % self.name
+        return '<Company %s>' % self.name

@@ -21,8 +21,9 @@ class DataExtractor:
     GEMH_PATTERN: str = r'\d+'
     DATE_PATTERN: str = r'\d{1,2}[-/]\d{1,2}[-/]\d{4}'
     WEBSITE_PATTERN: str = (
-        r'[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}'
-        r'\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
+        r'(?:https?://)?(?:www\.)?[a-zA-Z0-9_-]+\.'
+        r'[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*'
+        r'[a-zA-Z0-9_-]*(?:\?[a-zA-Z0-9_=-]*)?'
     )
 
     def _extract_website_values(self, words: list[str]) -> set[str]:
