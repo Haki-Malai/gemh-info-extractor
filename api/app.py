@@ -11,7 +11,7 @@ ma = Marshmallow()
 apifairy = APIFairy()
 
 
-def create_app(config_name):
+def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
@@ -28,13 +28,19 @@ def create_app(config_name):
     from api.cli import bp as cli_bp
     app.register_blueprint(cli_bp)
 
+    # Register error handlers
+    from api.errors import bp as error_bp
+    app.register_blueprint(error_bp)
+
     # Register blueprints
     from api.company import bp as company_bp
     app.register_blueprint(company_bp)
 
+    # Register shell context
     from api import models
+
     @app.shell_context_processor
-    def make_shell_context():
+    def make_shell_context() -> dict:
         ctx = {'db': db}
         for attr in dir(models):
             model = getattr(models, attr)
@@ -44,6 +50,7 @@ def create_app(config_name):
         return ctx
 
 
+    # Redirect to API docs
     @app.route('/')
     def index():
         return redirect(url_for('apifairy.docs'))
