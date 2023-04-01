@@ -8,14 +8,16 @@ from typing import Dict
 
 
 class DataExtractor:
-    BEFORE_GEMH_WORD: str = "ΓΕΜΗ"
-    BEFORE_DATE_WORD: str = "την"
-    BEFORE_WEBSITE_WORD: str = "ιστοσελιδασ"
-    AFTER_DATE_WORD: str = "καταχωρηθηκε"
+    BEFORE_GEMH_WORD: str = 'ΓΕΜΗ'
+    BEFORE_DATE_WORD: str = 'την'
+    BEFORE_WEBSITE_WORD: str = 'ιστοσελιδασ'
+    AFTER_DATE_WORD: str = 'καταχωρηθηκε'
     DATE_FORMATS: list[str] = ['%d/%m/%Y', '%d-%m-%Y', '%d/%m/%y', '%d-%m-%y']
-    BEFORE_NAME_WORD: str = "επωνυμια"
-    NAME_SYMBOLS: list[str] = ['-', '&']
+    BEFORE_NAME_WORD: str = 'επωνυμια'
+    NAME_SYMBOLS: list[str] = ['-', '&', '.']
+    NON_NAME_SYMBOLS: list[str] = [',', ':', '«', '»']
     NON_NAME_WORDS: list[str] = ['ΔΙΑΚΡΙΤΙΚΟΣ']
+    NAME_PATTERN: list[str] = [',', ':', ';',]
     GEMH_PATTERN: str = r"\d+"
     DATE_PATTERN: str = r"\d{1,2}[-/]\d{1,2}[-/]\d{4}"
     WEBSITE_PATTERN: str = (
@@ -87,9 +89,10 @@ class DataExtractor:
                 continue
 
             next_next_word = words[next_index + 1]
-            after_date_word_ratio = SequenceMatcher(None,
-                                                    self.AFTER_DATE_WORD,
-                                                    next_next_word.lower()).ratio()
+            after_date_word_ratio = SequenceMatcher(
+                None,
+                self.AFTER_DATE_WORD,
+                next_next_word.lower()).ratio()
             if after_date_word_ratio > 0.5:
                 date_obj = self._string_to_date(next_word)
                 date_values.add(date_obj)
@@ -116,7 +119,11 @@ class DataExtractor:
                     next_index += 1
                 else:
                     if name:
-                        name_values.add(' '.join(name))
+
+                        name = ' '.join(name)
+                        for symbol in self.NON_NAME_SYMBOLS:
+                            name = name.replace(symbol, '')
+                        name_values.add(name)
                     break
 
         return name_values
@@ -202,7 +209,10 @@ class FileProcessor:
             if data:
                 results.append(data)
 
-        print(f"Processed {files_count} files, extracted data from {len(results)} files")
+        print(f"Processed {files_count} files,"
+              f"extracted data from {len(results)} files")
+        import pprint
+        pprint.pprint(results)
         return results
 
 
