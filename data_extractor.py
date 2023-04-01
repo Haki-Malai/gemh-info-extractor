@@ -18,11 +18,11 @@ class DataExtractor:
     NON_NAME_SYMBOLS: list[str] = [',', ':', '«', '»']
     NON_NAME_WORDS: list[str] = ['ΔΙΑΚΡΙΤΙΚΟΣ']
     NAME_PATTERN: list[str] = [',', ':', ';',]
-    GEMH_PATTERN: str = r"\d+"
-    DATE_PATTERN: str = r"\d{1,2}[-/]\d{1,2}[-/]\d{4}"
+    GEMH_PATTERN: str = r'\d+'
+    DATE_PATTERN: str = r'\d{1,2}[-/]\d{1,2}[-/]\d{4}'
     WEBSITE_PATTERN: str = (
-        r"[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}"
-        r"\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+        r'[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}'
+        r'\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
     )
 
     def _extract_website_values(self, words: list[str]) -> set[str]:
@@ -138,34 +138,34 @@ class DataExtractor:
         name_values = self._extract_name_values(words)
 
         if len(gemh_values) > 1:
-            warn(f"Warning: Duplicate ΓΕΜΗ values found in {filename}")
+            warn(f'Warning: Duplicate ΓΕΜΗ values found in {filename}')
         elif len(gemh_values) == 0:
-            warn(f"Warning: No ΓΕΜΗ values found in {filename}")
+            warn(f'Warning: No ΓΕΜΗ values found in {filename}')
             data['gemh'] = ''
         else:
             data['gemh'] = list(gemh_values)[0]
 
         if len(date_values) > 1:
-            warn(f"Warning: Duplicate date values found in {filename}")
+            warn(f'Warning: Duplicate date values found in {filename}')
         elif len(date_values) == 0:
-            warn(f"Warning: No date values found in {filename}")
+            warn(f'Warning: No date values found in {filename}')
             data['date'] = ''
         else:
             data['date'] = list(date_values)[0]
 
         if len(website_values) > 1:
-            warn(f"Warning: Duplicate website values found in {filename}")
+            warn(f'Warning: Duplicate website values found in {filename}')
         elif len(website_values) == 0:
-            warn(f"Warning: No website values found in {filename}")
+            warn(f'Warning: No website values found in {filename}')
             data['website'] = ''
         else:
             data['website'] = list(website_values)[0]
 
         if len(name_values) > 1:
-            warn(f"Warning: Duplicate name values found in {filename}")
+            warn(f'Warning: Duplicate name values found in {filename}')
             data['name'] = list(name_values)[0]
         elif len(name_values) == 0:
-            warn(f"Warning: No name values found in {filename}")
+            warn(f'Warning: No name values found in {filename}')
             data['name'] = ''
         else:
             data['name'] = list(name_values)[0]
@@ -178,7 +178,7 @@ class DataExtractor:
                 return datetime.strptime(date_str, fmt)
             except ValueError:
                 pass
-        raise ValueError(f"Unable to parse date string: {date_str}")
+        raise ValueError(f'Unable to parse date string: {date_str}')
 
 
 class FileProcessor:
@@ -188,7 +188,7 @@ class FileProcessor:
 
     def process_files(self):
         if not os.path.isdir(self.folder):
-            print(f"Error: {self.folder} is not a valid folder.")
+            print(f'Error: {self.folder} is not a valid folder.')
             return
 
         files_count = 0
@@ -207,8 +207,8 @@ class FileProcessor:
             if data:
                 results.append(data)
 
-        print(f"Processed {files_count} files,"
-              f"extracted data from {len(results)} files")
+        print(f'Processed {files_count} files,'
+              f'extracted data from {len(results)} files')
         return results
 
 
