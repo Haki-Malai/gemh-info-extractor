@@ -105,7 +105,6 @@ class DataExtractor:
             before_name_word_ratio = SequenceMatcher(None,
                                                      self.BEFORE_NAME_WORD,
                                                      word.lower()).ratio()
-
             if before_name_word_ratio <= 0.5:
                 continue
 
@@ -117,14 +116,13 @@ class DataExtractor:
                     and next_word not in self.NON_NAME_WORDS:
                     name.append(next_word)
                     next_index += 1
-                else:
-                    if name:
-
-                        name = ' '.join(name)
-                        for symbol in self.NON_NAME_SYMBOLS:
-                            name = name.replace(symbol, '')
-                        name_values.add(name)
-                    break
+                    continue
+                elif name:
+                    name = ' '.join(name)
+                    for symbol in self.NON_NAME_SYMBOLS:
+                        name = name.replace(symbol, '')
+                    name_values.add(name)
+                break
 
         return name_values
 
@@ -211,8 +209,6 @@ class FileProcessor:
 
         print(f"Processed {files_count} files,"
               f"extracted data from {len(results)} files")
-        import pprint
-        pprint.pprint(results)
         return results
 
 
