@@ -30,3 +30,14 @@ def extract(folder: str):
             print(f'Duplicate entry for {data["name"]}')
             warn(e)
     print(f'Successfully added {added_companies} companies to the database.')
+
+
+@bp.cli.command('test', help='Run tests.')
+@click.option('--coverage', is_flag=True, help='Run tests with coverage.')
+def test(coverage: bool):
+    import pytest
+
+    if coverage:
+        pytest.main(['--cov=api', '--cov-report=html'])
+    else:
+        pytest.main()

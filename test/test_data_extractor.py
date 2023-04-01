@@ -1,10 +1,9 @@
 import os
-import datetime
 
 from data_extractor import DataExtractor
 
 
-def test_extract_data_from_file():
+def test_extract_data_from_file() -> None:
     de = DataExtractor()
 
     filename = 'test_file.txt'
