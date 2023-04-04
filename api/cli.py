@@ -10,9 +10,14 @@ from data_extractor import FileProcessor
 bp = Blueprint('script', __name__, cli_group=None)
 
 
-@bp.cli.command('extract', help='Extract data from text files in the ./txt folder.')
-@click.option('--folder', default='./txt', help='Path to the folder containing the txt files')
-def extract(folder: str):
+@bp.cli.command('extract',
+                help='Extract data from text files in the ./txt folder.')
+@click.option('--folder', default='./txt',
+              help='Path to the folder containing the txt files')
+def extract(folder: str) -> None:
+    """Extract data from text files in the ./txt folder.
+    :param folder: Path to the folder containing the txt files.
+    """
     fp = FileProcessor(folder=folder)
     company_data = fp.process_files()
     added_companies = 0
@@ -34,7 +39,10 @@ def extract(folder: str):
 
 @bp.cli.command('test', help='Run tests.')
 @click.option('--coverage', is_flag=True, help='Run tests with coverage.')
-def test(coverage: bool):
+def test(coverage: bool) -> None:
+    """Run tests.
+    :param coverage: Run tests with coverage.
+    """
     import pytest
 
     if coverage:

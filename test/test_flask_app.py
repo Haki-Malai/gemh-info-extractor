@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime
-from flask import url_for
+from flask import Flask, url_for
+from typing import Generator
 
 from api.app import create_app, redis_client
 from api.models import Company
@@ -11,7 +12,7 @@ COMPANIES_ROUTE: str = 'company.get_companies'
 
 
 @pytest.fixture
-def app():
+def app() -> Generator[Flask, None, None]:
     """Create and configure a new app instance for each test.
     """
     app = create_app('testing')
@@ -22,14 +23,14 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def client(app) -> Generator[Flask, None, None]:
     """A test client for the app.
     """
     return app.test_client()
 
 
 @pytest.fixture
-def db(app):
+def db(app) -> Generator[Flask, None, None]:
     """Create a new database for a test.
     """
     with app.app_context():
@@ -40,8 +41,10 @@ def db(app):
 
 
 @pytest.fixture
-def companies(db):
+def companies(db) -> list:
     """Create some companies for a test.
+    :param db: The db object.
+    :return: A list of companies.
     """
     companies = [
         Company(name='Company A',
@@ -59,7 +62,7 @@ def companies(db):
     return companies
 
 
-def test_index_redirects_to_api_docs(client):
+def test_index_redirects_to_api_docs(client) -> None:
     """Test that the index page redirects to the API docs.
     """
     response = client.get('/')
@@ -68,7 +71,7 @@ def test_index_redirects_to_api_docs(client):
                                                    _external=False)
 
 
-def test_get_companies(client, companies: list):
+def test_get_companies(client, companies: list) -> None:
     """Test that the GET /companies endpoint returns all companies.
     """
     response = client.get(url_for(COMPANIES_ROUTE))
@@ -88,7 +91,7 @@ def test_get_companies(client, companies: list):
         assert actual == expected
 
 
-def test_get_company(client, companies: list):
+def test_get_company(client, companies: list) -> None:
     """Test that the GET /companies/<id> endpoint returns a company.
     """
     company_id = companies[0].id
@@ -100,7 +103,7 @@ def test_get_company(client, companies: list):
     assert data == expected_data
 
 
-def test_get_company_not_found(client):
+def test_get_company_not_found(client) -> None:
     """Test that the GET /companies/<id> endpoint returns 404 when
     the company does not exist.
     """
@@ -111,7 +114,7 @@ def test_get_company_not_found(client):
     assert data['message'] == 'Not Found'
 
 
-def test_get_companies_pagination(client, companies: list):
+def test_get_companies_pagination(client, companies: list) -> None:
     """Test that the GET /companies endpoint returns the correct
     companies when using pagination.
     """

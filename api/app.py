@@ -14,7 +14,11 @@ redis_client = Redis.from_url(config['default'].REDIS_URL)
 
 
 def create_app(config_name: str) -> Flask:
-    app = Flask(__name__)
+    """Create a Flask application using the app factory pattern.
+    :param config_name: The configuration to use.
+    :return: The Flask application.
+    """
+    app: Flask = Flask(__name__)
     app.config.from_object(config[config_name])
 
     # Disable trailing slash
