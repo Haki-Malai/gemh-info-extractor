@@ -5,22 +5,22 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     # Flask
-    JSON_SORT_KEYS = False
+    JSON_SORT_KEYS: bool = False
 
     # SQLAlchemy
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = None
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = True
+    SQLALCHEMY_DATABASE_URI: str | None = None
 
     # MySQL
-    MYSQL_SERVER = os.environ.get('MYSQL_SERVER')
+    MYSQL_SERVER: str = os.environ.get('MYSQL_SERVER')
 
     # Data pagination
-    ITEMS_PER_BODY = 20
+    ITEMS_PER_BODY: int = 20
 
     # APIFairy
-    APIFAIRY_TITLE = os.environ.get('APIFAIRY_TITLE')
-    APIFAIRY_VERSION = os.environ.get('APIFAIRY_VERSION')
-    APIFAIRY_UI = os.environ.get('APIFAIRY_UI')
+    APIFAIRY_TITLE: str = os.environ.get('APIFAIRY_TITLE')
+    APIFAIRY_VERSION: str = os.environ.get('APIFAIRY_VERSION')
+    APIFAIRY_UI: str = os.environ.get('APIFAIRY_UI')
 
     def __init__(self, username, password, database):
         self.SQLALCHEMY_DATABASE_URI = (
@@ -39,7 +39,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     # For validating API urls
-    SERVER_NAME = '127.0.0.1:5000'
+    SERVER_NAME: str = '127.0.0.1:5000'
     
     def __init__(self):
         super().__init__(
