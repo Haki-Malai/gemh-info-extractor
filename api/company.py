@@ -1,8 +1,10 @@
-from flask import Blueprint
+from flask import Blueprint, abort
 from apifairy import response, other_responses
 
+from api.app import db
 from api.models import Company
 from api.schemas import CompanySchema
+from api.pagination import paginated_response
 
 bp = Blueprint('company', __name__)
 
@@ -11,7 +13,7 @@ companies_schema = CompanySchema(many=True)
 
 
 @bp.route('/company')
-@response(companies_schema)
+@paginated_response(companies_schema)
 def get_companies():
     """Get Companies
     """
@@ -23,5 +25,6 @@ def get_companies():
 @other_responses({404: 'Company not found'})
 def get_company(id: int):
     """Get Company
+    :param id: Company ID
     """
-    return Company.query.filter_by(id=id).first_or_404()
+    return db.session.get(Company, id) or abort(404)
