@@ -6,8 +6,8 @@ from api.app import create_app, redis_client
 from api.models import Company
 from api.schemas import CompanySchema
 
-COMPANY_ROUTE = 'company.get_company'
-COMPANIES_ROUTE = 'company.get_companies'
+COMPANY_ROUTE: str = 'company.get_company'
+COMPANIES_ROUTE: str = 'company.get_companies'
 
 
 @pytest.fixture
