@@ -4,11 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from apifairy import APIFairy
+from redis import Redis
 
 db = SQLAlchemy()
 mg = Migrate()
 ma = Marshmallow()
 apifairy = APIFairy()
+redis_client = Redis.from_url(config['default'].REDIS_URL)
 
 
 def create_app(config_name: str) -> Flask:

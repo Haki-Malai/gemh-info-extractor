@@ -22,6 +22,10 @@ class Config:
     APIFAIRY_VERSION: str = os.environ.get('APIFAIRY_VERSION')
     APIFAIRY_UI: str = os.environ.get('APIFAIRY_UI')
 
+    # Redis
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://')
+    CACHE_TIMEOUT: int = 60 * 60 * 24
+
     def __init__(self, username, password, database):
         self.SQLALCHEMY_DATABASE_URI = (
             f'mysql://{username}:{password}@'

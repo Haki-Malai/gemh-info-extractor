@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime
 from flask import url_for
 
-from api.app import create_app
+from api.app import create_app, redis_client
 from api.models import Company
 from api.schemas import CompanySchema
 
@@ -15,8 +15,10 @@ def app():
     """Create and configure a new app instance for each test.
     """
     app = create_app('testing')
+    redis_client.flushall()
     with app.app_context():
         yield app
+        redis_client.flushall()
 
 
 @pytest.fixture

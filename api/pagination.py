@@ -1,19 +1,20 @@
+import pickle
 from functools import wraps
 from apifairy import arguments, response
 from typing import Any, Dict, Callable, List
 from sqlalchemy.orm import Query
 from marshmallow import Schema
 
+from api.app import redis_client
 from api.schemas import StringPaginationSchema, paginated_collection
 from config import config
-
 
 PaginationDict = Dict[str, Any]
 
 
-def paginated_response(schema: Any,
+def paginated_response(schema: Schema,
                        max_limit: int = config['default'].ITEMS_PER_BODY,
-                       pagination_schema: Schema = StringPaginationSchema
+                       pagination_schema: Schema = StringPaginationSchema,
                        ) -> Callable[[Callable[..., Query]],
                             Callable[..., Dict[str, Any]]]:
     """Decorator for paginated responses
@@ -50,16 +51,30 @@ def paginated_response(schema: Any,
             if limit >= 1:
                 query = query.offset((page - 1) * limit)
 
+            # Check if the result is cached in Redis
+            cache_key = (f'{func.__name__}_{pickle.dumps(args)}_'
+                         f'{pickle.dumps(kwargs)}_{pickle.dumps(pagination)}')
+            cached_result = redis_client.get(cache_key)
+            if cached_result:
+                return pickle.loads(cached_result)
+
             data: List = query.all()
-            return {
+            result: Dict = {
                 'data': data,
                 'pagination': {
                     'page': page,
                     'limit': limit,
-                    'total': len(data),
-                    'count': count,
+                    'count': len(data),
+                    'total': count
                 }
             }
+
+            # Cache the result in Redis
+            redis_client.setex(cache_key,
+                               config['default'].CACHE_TIMEOUT,
+                               pickle.dumps(result))
+
+            return result
 
         return arguments(pagination_schema)(response(paginated_collection(
             schema, pagination_schema=pagination_schema))(paginate))
