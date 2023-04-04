@@ -4,10 +4,38 @@ import re
 from warnings import warn
 from datetime import datetime
 from difflib import SequenceMatcher
-from typing import Dict
+from typing import Dict, Set
 
 
 class DataExtractor:
+    """Extracts data from a list of words
+
+    Args:
+        words (list[str]): A list of words
+
+    Attributes:
+        BEFORE_GEMH_WORD (str): The word before the GEMH value
+        BEFORE_DATE_WORD (str): The word before the date value
+        BEFORE_WEBSITE_WORD (str): The word before the website value
+        AFTER_DATE_WORD (str): The word after the date value
+        DATE_FORMATS (list[str]): A list of possible date formats
+        BEFORE_NAME_WORD (str): The word before the name value
+        NAME_SYMBOLS (list[str]): A list of symbols that could be in a name
+        NON_NAME_SYMBOLS (list[str]): A list of symbols that are not in a name
+        NON_NAME_WORDS (list[str]): A list of words that are not in a name
+        NAME_PATTERN (list[str]): A list of symbols that are used to
+            separate names
+        GEMH_PATTERN (str): A pattern that is used to find GEMH values
+        DATE_PATTERN (str): A pattern that is used to find date values
+        WEBSITE_PATTERN (str): A pattern that is used to find website values
+
+    Methods:
+        extract_data: Extracts the data from the list of words
+        _extract_website_values: Extracts the website values
+        _extract_gemh_values: Extracts the GEMH values
+        _extract_date_values: Extracts the date values
+        _extract_name_values: Extracts the name values
+    """
     BEFORE_GEMH_WORD: str = 'ΓΕΜΗ'
     BEFORE_DATE_WORD: str = 'την'
     BEFORE_WEBSITE_WORD: str = 'ιστοσελιδασ'
@@ -27,6 +55,10 @@ class DataExtractor:
     )
 
     def _extract_website_values(self, words: list[str]) -> set[str]:
+        """Extracts the website values
+        :param words: A list of words
+        :return: The website values
+        """
         website_values = set()
         for index, word in enumerate(words):
             ratio = SequenceMatcher(
@@ -49,6 +81,10 @@ class DataExtractor:
         return website_values
 
     def _extract_gemh_values(self, words: list[str]) -> set[int]:
+        """Extracts the GEMH values
+        :param words: A list of words
+        :return: The GEMH values
+        """
         gemh_values = set()
         for index, word in enumerate(words):
             gemh_ratio = SequenceMatcher(None,
@@ -70,6 +106,10 @@ class DataExtractor:
         return gemh_values
 
     def _extract_date_values(self, words: list[str]) -> set[str]:
+        """Extracts the date values
+        :param words: A list of words
+        :return: The date values
+        """
         date_values = set()
         for index, word in enumerate(words):
             before_date_word_ratio = SequenceMatcher(None,
@@ -101,6 +141,10 @@ class DataExtractor:
         return date_values
 
     def _extract_name_values(self, words: list[str]) -> set[str]:
+        """Extracts the name values
+        :param words: A list of words
+        :return: The name values
+        """
         name_values = set()
         for index, word in enumerate(words):
             before_name_word_ratio = SequenceMatcher(None,
@@ -128,52 +172,55 @@ class DataExtractor:
         return name_values
 
     def extract_data_from_file(self, filename: str) -> Dict[str, str]:
+        """Extracts the data from a file
+        :param filename: The file name
+        :return: The extracted data
+        """
         data = {}
         with open(filename, 'r') as f:
             text = f.read()
             words = text.split()
-
-        gemh_values = self._extract_gemh_values(words)
-        date_values = self._extract_date_values(words)
-        website_values = self._extract_website_values(words)
-        name_values = self._extract_name_values(words)
-
-        if len(gemh_values) > 1:
-            warn(f'Warning: Duplicate ΓΕΜΗ values found in {filename}')
-        elif len(gemh_values) == 0:
-            warn(f'Warning: No ΓΕΜΗ values found in {filename}')
-            data['gemh'] = ''
-        else:
-            data['gemh'] = list(gemh_values)[0]
-
-        if len(date_values) > 1:
-            warn(f'Warning: Duplicate date values found in {filename}')
-        elif len(date_values) == 0:
-            warn(f'Warning: No date values found in {filename}')
-            data['date'] = ''
-        else:
-            data['date'] = list(date_values)[0]
-
-        if len(website_values) > 1:
-            warn(f'Warning: Duplicate website values found in {filename}')
-        elif len(website_values) == 0:
-            warn(f'Warning: No website values found in {filename}')
-            data['website'] = ''
-        else:
-            data['website'] = list(website_values)[0]
-
-        if len(name_values) > 1:
-            warn(f'Warning: Duplicate name values found in {filename}')
-            data['name'] = list(name_values)[0]
-        elif len(name_values) == 0:
-            warn(f'Warning: No name values found in {filename}')
-            data['name'] = ''
-        else:
-            data['name'] = list(name_values)[0]
-
+        
+        data = {
+            'gemh': self._get_first_or_warn(
+                self._extract_gemh_values(words),
+                f'Duplicate ΓΕΜΗ values found in {filename}',
+                f'No ΓΕΜΗ values found in {filename}'),
+            'date': self._get_first_or_warn(
+                self._extract_date_values(words),
+                f'Duplicate date values found in {filename}',
+                f'No date values found in {filename}'),
+            'website': self._get_first_or_warn(
+                self._extract_website_values(words),
+                f'Duplicate website values found in {filename}',
+                f'No website values found in {filename}'),
+            'name': self._get_first_or_warn(
+                self._extract_name_values(words),
+                f'Duplicate name values found in {filename}',
+                f'No name values found in {filename}')
+        }
+        
         return data
+    
+    def _get_first_or_warn(self, values: Set[str], duplicate_warning: str, no_values_warning: str) -> str:
+        """Gets the first value from a set or raises a warning
+        :param values: The set of values
+        :param duplicate_warning: The warning to raise if there are duplicate values
+        :param no_values_warning: The warning to raise if there are no values
+        :return: The first value
+        """
+        if len(values) > 1:
+            warn(duplicate_warning)
+        elif len(values) == 0:
+            warn(no_values_warning)
+            return ''
+        return next(iter(values))
 
     def _string_to_date(self, date_str: str) -> datetime:
+        """Converts a date string to a datetime object
+        :param date_str: The date string
+        :return: The datetime object
+        """
         for fmt in self.DATE_FORMATS:
             try:
                 return datetime.strptime(date_str, fmt)
@@ -183,11 +230,16 @@ class DataExtractor:
 
 
 class FileProcessor:
+    """Processes the text files
+    """
     def __init__(self, folder: str='./txt'):
         self.folder = folder
         self.extractor = DataExtractor()
 
     def process_files(self):
+        """Processes the files
+        :return: The extracted data
+        """
         if not os.path.isdir(self.folder):
             print(f'Error: {self.folder} is not a valid folder.')
             return

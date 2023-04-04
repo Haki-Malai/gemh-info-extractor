@@ -25,6 +25,5 @@ def get_companies():
 @other_responses({404: 'Company not found'})
 def get_company(id: int):
     """Get Company
-    :param id: Company ID
     """
     return db.session.get(Company, id) or abort(404)
