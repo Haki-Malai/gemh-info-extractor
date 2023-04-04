@@ -1,7 +1,7 @@
 import pickle
 from functools import wraps
 from apifairy import arguments, response
-from typing import Any, Dict, Callable, List
+from collections.abc import Callable
 from sqlalchemy.orm import Query
 from marshmallow import Schema
 
@@ -9,21 +9,21 @@ from api.app import redis_client
 from api.schemas import StringPaginationSchema, paginated_collection
 from config import config
 
-PaginationDict = Dict[str, Any]
+PaginationDict = dict[str, any]
 
 
 def paginated_response(schema: Schema,
                        max_limit: int = config['default'].ITEMS_PER_BODY,
                        pagination_schema: Schema = StringPaginationSchema,
                        ) -> Callable[[Callable[..., Query]],
-                            Callable[..., Dict[str, Any]]]:
+                            Callable[..., dict[str, any]]]:
     """Decorator for paginated responses
     :param schema: Marshmallow schema for the response
     :param max_limit: Maximum number of items per page
     :param pagination_schema: Marshmallow schema for pagination parameters
     :return: Decorator function
     """
-    def inner(func: Callable[..., Query]) -> Callable[..., Dict[str, Any]]:
+    def inner(func: Callable[..., Query]) -> Callable[..., dict[str, any]]:
         """Decorator function
         :param func: Function to decorate
         :return: Decorated function
@@ -35,7 +35,7 @@ def paginated_response(schema: Schema,
             :param kwargs: Keyword arguments to pass to the function
             :return: Paginated response
             """
-            args: List = list(args)
+            args: list = list(args)
             pagination: PaginationDict = args.pop(-1) if len(args) > 0 else {}
             query: Query = func(*args, **kwargs)
 
@@ -58,8 +58,8 @@ def paginated_response(schema: Schema,
             if cached_result:
                 return pickle.loads(cached_result)
 
-            data: List = query.all()
-            result: Dict = {
+            data: list = query.all()
+            result: dict = {
                 'data': data,
                 'pagination': {
                     'page': page,

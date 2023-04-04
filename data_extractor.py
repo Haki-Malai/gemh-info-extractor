@@ -4,7 +4,6 @@ import re
 from warnings import warn
 from datetime import datetime
 from difflib import SequenceMatcher
-from typing import Dict, Set
 
 
 class DataExtractor:
@@ -171,7 +170,7 @@ class DataExtractor:
 
         return name_values
 
-    def extract_data_from_file(self, filename: str) -> Dict[str, str]:
+    def extract_data_from_file(self, filename: str) -> dict[str, str]:
         """Extracts the data from a file
         :param filename: The file name
         :return: The extracted data
@@ -202,7 +201,7 @@ class DataExtractor:
         
         return data
     
-    def _get_first_or_warn(self, values: Set[str], duplicate_warning: str, no_values_warning: str) -> str:
+    def _get_first_or_warn(self, values: set[str], duplicate_warning: str, no_values_warning: str) -> str:
         """Gets the first value from a set or raises a warning
         :param values: The set of values
         :param duplicate_warning: The warning to raise if there are duplicate values
