@@ -15,11 +15,13 @@ bp = Blueprint('script', __name__, cli_group=None)
 @click.option('--folder', default='./txt',
               help='Path to the folder containing the txt files')
 def extract(folder: str) -> None:
-    """Extract data from text files in the ./txt folder.
+    """Extract data from text files in the ./txt folder and insert them to the
+    database.
     :param folder: Path to the folder containing the txt files.
     """
     fp = FileProcessor(folder=folder)
     company_data = fp.process_files()
+
     added_companies = 0
     for data in company_data:
         company = Company(name=data['name'],
