@@ -49,7 +49,6 @@ def create_app(config_name: str) -> Flask:
                 ctx[attr] = model
         return ctx
 
-
     # Redirect to API docs
     @app.route('/')
     def index():
