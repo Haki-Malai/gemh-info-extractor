@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   db:
+    container_name: db
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     environment:
@@ -9,16 +10,28 @@ services:
       - "3306:3306"
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  db-init:
-    image: mysql
-    command: sh -c 'sleep 10 && mysql -h db -uroot -ppassword < /init.sql'
-    volumes:
-      - ./database/init.sql:/init.sql
-    depends_on:
-      - db
-
+    mem_limit: 1g
   redis:
+    container_name: redis
     image: redis
     ports:
       - "6379:6379"
+    mem_limit: 1g
+  api:
+    container_name: api
+    build: .
+    command: >
+      bash -c '
+      while ! mysqladmin ping -h db -u root --password=password;
+      do sleep 1; done
+      && flask test
+      && flask extract
+      && gunicorn main:app --conf gunicorn.conf.py --bind 0.0.0.0:8000'
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    mem_limit: 1g

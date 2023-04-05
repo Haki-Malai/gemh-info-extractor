@@ -23,7 +23,7 @@ class Config:
     APIFAIRY_UI: str = os.environ.get('APIFAIRY_UI')
 
     # Redis
-    REDIS_URL = os.environ.get('REDIS_URL', 'redis://')
+    REDIS_HOST = os.environ.get('REDIS_HOST')
     CACHE_TIMEOUT: int = 60 * 60 * 24
 
     def __init__(self, username, password, database):

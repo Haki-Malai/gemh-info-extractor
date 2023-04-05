@@ -10,7 +10,7 @@ db = SQLAlchemy()
 mg = Migrate()
 ma = Marshmallow()
 apifairy = APIFairy()
-redis_client = Redis.from_url(config['default'].REDIS_URL)
+redis_client = Redis(host=config['default'].REDIS_HOST, port=6379)
 
 
 def create_app(config_name: str) -> Flask:
