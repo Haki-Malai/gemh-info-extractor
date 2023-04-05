@@ -4,7 +4,7 @@
 
 This project implements an algorithm in Python to parse given txt files and extract information about a company. Specifically, the algorithm extracts the company's official name, GEMH number, website (if mentioned in the file), and the date of the website's registration.
 
-The code first turns the txt file to a list of wards and defines a class called **DataExtractor** that extracts data from the list. It has methods to extract website values, GEMH values, date values, and name values from the list of words. The class also has various attributes that define patterns and words used to extract the data.
+The code first turns the txt file to a list of words and defines a class called **DataExtractor** that extracts the data from the list. It has methods to extract website values, GEMH values, date values, and name values from the list of words. The class also has various attributes that define patterns and words used to extract the data.
 
 The extracted data is then stored in a MySQL database, and can be accessed via a RESTful API endpoint that takes as input the company's GEMH number and returns all available information about the company.
 
@@ -12,6 +12,7 @@ The RESTful API provides a live documentation site on /docs url.
 
 ## How to Run
 To run this project, you'll need to have Docker and Docker Compose installed on your system. Once you have those installed, follow these steps:
+
 ### Using Docker Compose
 To run the app using Docker Compose, follow these steps:
   1. Clone this repository to your machine.
@@ -53,7 +54,7 @@ To run the app using Flask Run, follow these steps:
   ```sh
   flask run
   ```
- 
+
 ### Options
 ```bash
 flask --help
