@@ -42,6 +42,7 @@ To run the app using Flask Run, follow these steps:
   6. Run the mysql and redis containers or use your own and edit the .env file:
   ```sh
   docker-compose up -d db redis
+  ```
   7. Test the app once the containers are up and finished initializing:
   ```sh
   flask test
