@@ -20,7 +20,6 @@ COPY test test
 COPY txt txt
 
 COPY .docker_env .env
-COPY .docker_flaskenv .flaskenv
 
 EXPOSE 8000
 
