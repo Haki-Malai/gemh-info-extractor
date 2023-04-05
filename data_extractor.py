@@ -29,11 +29,13 @@ class DataExtractor:
         WEBSITE_PATTERN (str): A pattern that is used to find website values
 
     Methods:
-        extract_data: Extracts the data from the list of words
         _extract_website_values: Extracts the website values
         _extract_gemh_values: Extracts the GEMH values
         _extract_date_values: Extracts the date values
         _extract_name_values: Extracts the name values
+        _extract_data_from_file: Extracts the data from a file
+        _get_first_or_warn: Gets the first value from a set or warns
+        _string_to_date: Converts a string to a date
     """
     BEFORE_GEMH_WORD: str = 'ΓΕΜΗ'
     BEFORE_DATE_WORD: str = 'την'
